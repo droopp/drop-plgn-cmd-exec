@@ -13,7 +13,7 @@
                  "cmd":"system::local::start_pool::cmd-exec::1"
                 },
                 {"num":2,
-                 "cmd": "system::local::start_all_workers::cmd-exec::-m 20 plugin::./cmd-exec -drop cmd-exec ::cmd-exec.log::5000",
+                 "cmd": "system::local::start_all_workers::cmd-exec::-m 20 plugin::./cmd-exec -drop cmd-exec ::cmd-exec.log::5000"
                 }
  
             ]
