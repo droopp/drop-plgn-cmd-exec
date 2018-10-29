@@ -1,0 +1,7 @@
+#!/bin/sh
+# Don't change this file
+# Its generate automatically
+
+## create symlink
+ln -s /opt/drop-plgn-cmd-exec/drop-plgn-cmd-exec.json /var/lib/drop/flows/drop-plgn-cmd-exec.json
+ln -s /opt/drop-plgn-cmd-exec/cmd-exec/cmd-exec /var/lib/drop/plugins/cmd-exec

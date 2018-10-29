@@ -1,0 +1,6 @@
+#!/bin/sh
+# Don't change this file
+# Its generate automatically
+
+rm -f /var/lib/drop/flows/drop-plgn-cmd-exec.json
+rm -f /var/lib/drop/plugins/cmd-exec

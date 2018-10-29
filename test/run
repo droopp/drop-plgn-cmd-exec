@@ -1,0 +1,71 @@
+#!/usr/bin/python
+#
+# test runner
+#
+
+import subprocess as sp
+import os
+import time
+import sys
+
+
+def run_shell(d, cmd):
+    with open(os.devnull, 'w') as devnull:
+        return sp.check_output("echo '{}'|{} 2>/dev/null ;exit 0".
+                               format(d, cmd), stderr=devnull, shell=True)
+
+
+def test(cmd):
+
+    print("start testing cmd {}\n".format(cmd))
+    in0 = [x for x in open("./input.d").read().split("\n\n") if not x.startswith("##")]
+    out = [x for x in open("./output.d").read().split("\n\n") if not x.startswith("##")]
+
+    _i = "\n".join([x.replace("\n", "	ncm	") for x in in0])
+
+    _d = run_shell(_i, cmd).split("\n")
+
+    for r, o, i0 in zip(_d, out, in0):
+        _r = r.replace("	ncm	", "\n")
+        if _r != o:
+            print("TEST FAILED!!!\n in: {}\n out: {}\n expected: {}\n".format(i0, _r, o))
+
+
+def bench(cmd, b, w):
+
+    if b is None:
+        return
+
+    print("start bench cmd {}\n".format(cmd))
+    in0 = [x for x in open("./input.d").read().split("\n\n") if not x.startswith("##")]
+
+    for b1 in in0:
+
+        _i = "{}\n".format(b1.replace("\n", "	ncm	"))*b
+
+        tb = time.time()
+        _d = run_shell(_i[0], cmd).split("\n")
+        start_up_proc = time.time() - tb
+
+        tb = time.time()
+        _d = run_shell(_i, cmd).split("\n")
+        te = time.time() - tb - start_up_proc
+
+        if te > w:
+            print("...count:{} \n in: {}\n time: {}\n water mark {}\n".
+                  format(len(_d), b1, te, w))
+
+
+def main(b, w):
+    _cmds = open("./cmd.d").read().split("\n\n")
+    [test(x) for x in _cmds if not x.startswith("##") and x!=""]
+    [bench(x, b, w) for x in _cmds if not x.startswith("##") and x!=""]
+
+
+if __name__ == "__main__":
+    try:
+        _bench_c, _bench_wm = int(sys.argv[1]), float(sys.argv[2])
+    except:
+        _bench_c, _bench_wm = None, None
+
+    main(_bench_c, _bench_wm)

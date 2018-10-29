@@ -1,0 +1,33 @@
+ {
+    "name": "drop-plgn-cmd-exec",  
+    "active": 1,
+    "priority": 1,
+    "version": 0,
+    "entry_ppool": "cmd-exec",
+    "start_scene": "start",
+    "scenes":[
+        {
+            "name" : "start",
+            "cook": [
+                {"num":1,
+                 "cmd":"system::local::start_pool::cmd-exec::1"
+                },
+                {"num":2,
+                 "cmd":"system::local::start_all_workers::cmd-exec::plugin::/cmd-exec -drop cmd-exec ::cmd-exec.log::5000"
+                }
+ 
+            ]
+
+        },
+        {
+            "name" : "stop",
+            "cook": [
+                {"num":1,
+                 "cmd":"system::local::stop_pool::cmd-exec"
+                }
+            ]
+
+        }
+    ]
+
+}

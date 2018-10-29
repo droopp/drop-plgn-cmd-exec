@@ -1,0 +1,86 @@
+#!/opt/drop-pyenv/bin/python
+
+#
+# Python cmd worker
+#
+
+import sys
+import time
+
+import json
+import subprocess as sp
+
+
+# API
+
+
+def read():
+    m = sys.stdin.readline()
+    return m.strip().replace("\tncm\t", "\n")
+
+
+def log(m):
+    sys.stderr.write("{}: {}\n".format(time.time(), m))
+    sys.stderr.flush()
+
+
+def send(m):
+    sys.stdout.write("{}\n".format(m.replace("\n", "\tncm\t")))
+    sys.stdout.flush()
+
+
+# Process - actor
+#  read - recieve message from world
+#  send - send message to world
+#  log  -  logging anything
+
+def parse_data(msg):
+
+    data = {}
+    try:
+        data = json.loads(msg)
+    except Exception as e:
+        log("error data: {} / {}".format(e, msg))
+
+    return data
+
+
+def run_cmd(s):
+    try:
+
+        cmd = sp.Popen(s.split(" "), stdout=sp.PIPE, stderr=sp.PIPE)
+        _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
+        if cmd.returncode != 0:
+            return (1, _stdout + _stderr)
+
+        return (0, _stdout)
+
+    except Exception as e:
+        return (1, str(e))
+
+
+def main():
+
+    while 1:
+        msg = read()
+        if not msg:
+            break
+
+        log("get message: " + msg)
+        data = parse_data(msg)
+
+        _op = data.get("cmd")
+
+        if _op is not None:
+            _c, _d = run_cmd(_op)
+            log("cmd {} : code: {}/ text {}".format(_op,
+                                                       _c,
+                                                       _d.decode('utf8')))
+            send(json.dumps({"code": _c, "text": _d}))
+
+        else:
+            log("no cmd found {}".format(msg))
+            send(json.dumps({"error": "no cmd found"}))
+
+if __name__ == "__main__":
+    main()
