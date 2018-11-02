@@ -72,7 +72,7 @@ def main():
         _op = data.get("cmd")
 
         if _op is not None:
-            _c, _d = run_cmd(_op)
+            _c, _d = run_cmd("sudo " + _op)
             log("cmd {} : code: {}/ text {}".format(_op,
                                                        _c,
                                                        _d.decode('utf8')))
